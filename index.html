@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+
+<html lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>صفحة الألعاب</title>
+<style>
+        @font-face {
+            font-family: 'Bebas Neue';
+            src: url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5em;
+        }
+
+        .search-bar {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .search-bar input {
+            width: 80%;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px; /* مسافة بين الصفوف والأعمدة */
+            padding: 20px;
+            justify-items: center;
+        }
+
+        .game-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            text-align: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .game-card img {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            width: 100%;
+        }
+
+        .game-card h3 {
+            margin: 10px 0;
+        }
+
+        .game-card p {
+            padding: 0 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .game-card button {
+            background-color: #4CAF50;
+            background-image: linear-gradient(to right, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 0 0 8px 8px;
+            padding: 10px;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+
+        .game-card button:hover {
+            background-color: #45a049;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-card:hover {
+            transform: scale(1.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .modal .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .download-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            display: none;
+            margin-top: 20px;
+        }
+
+        .download-bar-fill {
+            width: 0;
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            transition: width 4s;
+        }
+
+        .modal button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        .modal button:hover {
+            background-color: #45a049;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.querySelector('.search-bar input');
+            const gameCards = document.querySelectorAll('.game-card');
+
+            searchInput.addEventListener('input', function () {
+                const searchValue = searchInput.value.toLowerCase();
+                gameCards.forEach(card => {
+                    const gameName = card.querySelector('h3').textContent.toLowerCase();
+                    if (gameName.includes(searchValue)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        function showModal(card) {
+            const modal = document.getElementById('game-modal');
+            const modalContent = modal.querySelector('.modal-content');
+            const gameImg = card.querySelector('img').src;
+            const gameTitle = card.querySelector('h3').textContent;
+            const downloadUrl = card.getAttribute('data-download-url');
+
+            modalContent.innerHTML = `
+                <span class="close" onclick="closeModal()">&times;</span>
+                <img src="${gameImg}" alt="${gameTitle}" style="width: 100%; border-radius: 8px;">
+                <h3>${gameTitle}</h3>
+                <p>Version: Latest Version</p>
+                <p>Date: 2024</p>
+                <p>Free to play</p>
+                <button onclick="startDownload('${downloadUrl}')">Download</button>
+                <div class="download-bar">
+                    <div class="download-bar-fill"></div>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('game-modal');
+            modal.style.display = 'none';
+        }
+
+        function startDownload(url) {
+            const button = document.querySelector('.modal button');
+            const downloadBar = document.querySelector('.download-bar');
+            const downloadFill = document.querySelector('.download-bar-fill');
+
+            button.style.display = 'none';
+            downloadBar.style.display = 'block';
+            // Trigger the animation
+            setTimeout(() => {
+                downloadFill.style.width = '100%';
+            }, 10); // Delay added to ensure the animation transition occurs
+
+            setTimeout(() => {
+                window.location.href = url;
+            }, 4000);
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('game-modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+<link rel="me" href="https://www.blogger.com/profile/01346904356366767412" />
+<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+<meta name='google-adsense-platform-domain' content='blogspot.com'/>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4461471067450352&host=ca-host-pub-1556223355139109" crossorigin="anonymous"></script>
+
+<!-- data-ad-client=ca-pub-4461471067450352 -->
+<link rel="me" href="https://www.blogger.com/profile/01346904356366767412" />
+<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+<meta name='google-adsense-platform-domain' content='blogspot.com'/>
+
+<!-- data-ad-client=ca-pub-4461471067450352 -->
+</head>
+<body>
+<header>
+<h1>GAMES4YOU</h1>
+<div class="search-bar">
+<input placeholder="search" type="text"/>
+</div>
+</header>
+<div class="container">
+<div class="game-card" data-download-url="https://installchecker.com/cl/i/99jjxv" id="game1" onclick="showModal(this)">
+<img alt="Game 1" src="https://i.ibb.co/TmNLqFp/download-5.png"/>
+<h3>Sprunki (Andriod&IOS)</h3>
+<p>Clique here</p>
+</div>
+<div class="game-card" data-download-url="https://installchecker.com/cl/i/kl3jpg" id="game2" onclick="showModal(this)">
+<img alt="Game 2" src="https://i.ibb.co/XWdc8Ky/fc3b3c76541d87134b9f977846953f85.png"/>
+<h3>Animal Crossing: Pocket Camp Complete</h3>
+<p>Clique here</p>
+</div>
+<div class="game-card" data-download-url="https://installchecker.com/cl/i/lk1xxd" id="game3" onclick="showModal(this)">
+<img alt="Game 3" src="https://i.ibb.co/ByPLXnJ/balatro-2-140x140.png"/>
+<h3>Balatro APK</h3>
+<p>Clique here</p>
+</div>
+<div class="game-card" data-download-url="https://installchecker.com/cl/i/g68dk2" onclick="showModal(this)">
+<img alt="Game 4" src="https://i.ibb.co/9cdZVXQ/unnamed.png"/>
+<h3>NecroMerger v1.45 MOD APK (Unlimited Currency/Spawn/Time)</h3>
+<p>Clique here</p>
+</div>
+<div class="game-card" data-download-url="https://installchecker.com/cl/i/lk1edg" id="game5" onclick="showModal(this)">
+<img alt="Game 5" src="https://i.ibb.co/gZ2zGsh/58cb6dd50f3e7.png"/>
+<h3>FNAF World Mod Apk 1.0 [Unlimited money]</h3>
+<p>Clique here</p>
+</div>
+<div class="game-card" data-download-url="https://sites.google.com/view/games4uuuu/%D8%A7%D9%84%D8%B5%D9%81%D8%AD%D8%A9-%D8%A7%D9%84%D8%B1%D8%A6%D9%8A%D8%B3%D9%8A%D8%A9" id="game6" onclick="showModal(this)">
+<img alt="Game 6" src="https://i.ibb.co/jySPPth/images-3.jpg"/>
+<h3>SPIDER-MAN</h3>
+<p>Clique here</p>
+</div>
+<div class="game-card" data-download-url="https://installchecker.com/cl/i/ndrxv9" id="game7" onclick="showModal(this)">
+<img alt="Game 7" src="https://i.ibb.co/X5ym49w/download-9.jpg"/>
+<h3>Dragon ball legends mod menu</h3>
+<p>Clique here</p>
+</div>
+<div class="game-card" data-download-url="https://installchecker.com/cl/i/dv91do" id="game8" onclick="showModal(this)">
+<img alt="Game 8" src="https://i.ibb.co/TLqHj2r/65844b7714034-com-carxtech-sr.jpg"/>
+<h3>CarX Street [Unlimited money]</h3>
+<p>Clique here</p>
+</div>
+<div class="game-card" data-download-url="https://installchecker.com/cl/i/7d29rk" id="game9" onclick="showModal(this)"><img alt="basketball dc" src="https://i.ibb.co/xSJhF2G/1719260830-car-parking-multiplayer-2.png"/>
+<h3>Car Parking Multiplayer 2 (MOD, Unlimited Money)</h3>
+<p>Clique here</p>
+</div>
+  
+  <div class="game-card" data-download-url="https://installchecker.com/cl/i/wol27j" id="game10" onclick="showModal(this)"><img alt="Little Nightmares 2" src="https://i.ibb.co/Fzrb12w/icon-1.webp"/><h3>Little Nightmares 2</h3><p>Clique here</p></div>
+  
+  <div class="game-card" data-download-url="https://sites.google.com/view/five-nights-at-freddys1234/%D8%A7%D9%84%D8%B5%D9%81%D8%AD%D8%A9-%D8%A7%D9%84%D8%B1%D8%A6%D9%8A%D8%B3%D9%8A%D8%A9" id="game11" onclick="showModal(this)"><img alt="Minecraft" src="https://i.ibb.co/gDdvDJt/Picsart-24-11-23-13-27-00-966.jpg"/><h3>Five Nights at Freddy's</h3><p>Clique here</p></div>
+  
+  <div class="game-card" data-download-url="https://installchecker.com/cl/i/pongwl" onclick="showModal(this)"><img alt=" Last Day on Earth: Survival (MOD Menu)" src="https://i.ibb.co/nCwpTVB/1683145894-last-day.png"/><h3> Last Day on Earth: Survival (MOD Menu)</h3><p>Clique here</p></div>
+  
+  <div class="game-card" data-download-url="https://shuuuzy.github.io/The-Spike/" id="game13" onclick="showModal(this)"><img alt="Call of Duty: Mobile" src="https://i.ibb.co/ZckK2Yd/62c97cef3436d.png"/><h3>The Spike (MOD, Unlimited Money)</h3><p>Clique here</p></div>
+  
+  <div class="game-card" data-download-url="https://installchecker.com/cl/i/wolkp2" id="game14" onclick="showModal(this)"><img alt="Among Us" src="https://i.ibb.co/NrTwvH5/Hill-climbing-Racing-2-MOd-Apk-An1.jpg"/><h3>Hill Climb Racing 2 MOD APK (Unlimited Money/All Cars Unlocked)</h3><p>Clique here</p></div>
+  
+  <div class="game-card" data-download-url="https://installchecker.com/cl/i/lk1gmg" id="game15" onclick="showModal(this)"><img alt="Clash of Clans" src="https://i.ibb.co/SP9M7XN/Picsart-24-12-01-21-27-05-517.jpg"/><h3>Ultra FUCK Aim 8 ball</h3><p>Clique here</p></div>
+  
+  <div class="game-card" data-download-url="https://installchecker.com/cl/i/me4918" id="game16" onclick="showModal(this)"><img alt="Asphalt 9" src="https://i.ibb.co/mDk0sW0/sonic-world-adventure-v0-5ut32saz44jd1.webp"/><h3>SONIC WD3</h3><p>SONIC WD3</p></div>
+  
+  <div class="game-card" data-download-url="https://shuuuzy.github.io/Stardew-Valley/" id="game17" onclick="showModal(this)"><img alt="League of Legends" src="https://i.ibb.co/Hg0S3Sk/230x0w.webp"/><h3>Stardew Valley</h3><p>Clique here</p></div>
+  
+  <div class="game-card" data-download-url="https://installchecker.com/cl/i/pon1pl" id="game18" onclick="showModal(this)"><img alt="Free Fire" src="https://i.ibb.co/TMS6L17/1680968344-baseball-9.png"/><h3>BASEBALL 9 (MOD, Unlimited Money)</h3><p>Clique here</p></div>
+  
+ </div>
+<div class="modal" id="game-modal">
+<div class="modal-content"></div>
+</div>
+</body>
+</html>
